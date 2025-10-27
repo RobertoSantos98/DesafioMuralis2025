@@ -1,0 +1,6 @@
+@DesafioMuralis2025_HostAddress = http://localhost:5031
+
+GET {{DesafioMuralis2025_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
