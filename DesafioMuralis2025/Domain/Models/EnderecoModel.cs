@@ -11,5 +11,7 @@
         public int ClienteId { get; private set; }
         public virtual ClienteModel Cliente { get; private set; }
 
+        private EnderecoModel() { }
+
     }
 }

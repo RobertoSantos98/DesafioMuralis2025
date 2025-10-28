@@ -8,6 +8,9 @@
 
         public int ClienteId { get; private set; }
         public ClienteModel? Cliente { get; private set; }
+
+
+        private ContatoModel() { }
        
     }
 }
