@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using DesafioMuralis2025.Domain.DTOs;
+using System.Text.Json;
 
 
 namespace DesafioMuralis2025.Application.Providers.CepProvider
@@ -12,7 +13,7 @@ namespace DesafioMuralis2025.Application.Providers.CepProvider
         }
 
 
-        public async Task<ApiResponse?> GetAddressByCepAsync(string cep)
+        public async Task<EnderecoDTO?> GetAddressByCepAsync(string cep)
         {
             try
             {
@@ -32,7 +33,16 @@ namespace DesafioMuralis2025.Application.Providers.CepProvider
 
                 var result = JsonSerializer.Deserialize<ApiResponse>(content);
 
-                return result;
+                var enderecoDTO = new EnderecoDTO
+                (
+                    result.cep,
+                    result.logradouro ?? string.Empty,
+                    result.localidade ?? string.Empty,
+                    string.Empty,
+                    result.complemento ?? string.Empty
+                );
+
+                return enderecoDTO;
 
 
             }
@@ -43,7 +53,7 @@ namespace DesafioMuralis2025.Application.Providers.CepProvider
 
         }
 
-        private class ApiResponse()
+        public class ApiResponse()
         {
             public string cep { get; set; }
             public string? logradouro { get; set; }
