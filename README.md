@@ -126,8 +126,6 @@ GET /api/clientes - Lista todos os clientes.
 
 GET /api/clientes/{id} - Consulta um cliente específico.
 
-GET /api/clientes/buscar?termo=... - Pesquisa clientes.
-
 PUT /api/clientes/{id} - Altera um cliente existente.
 
 DELETE /api/clientes/{id} - Exclui um cliente.
