@@ -1,4 +1,5 @@
 using DesafioMuralis2025.Application.Providers.CepProvider;
+using DesafioMuralis2025.Application.Services.ClienteServices;
 using DesafioMuralis2025.Infrastructure;
 using DesafioMuralis2025.Infrastructure.Repositories.Clientes;
 using DesafioMuralis2025.Infrastructure.Repositories.Contato;
@@ -29,6 +30,8 @@ builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
 
 
 builder.Services.AddHttpClient<ICepProvider, CepProvider>();
+
+builder.Services.AddScoped<IClienteService, ClienteService>();
 
 
 

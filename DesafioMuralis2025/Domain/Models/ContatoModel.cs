@@ -11,6 +11,12 @@
 
 
         private ContatoModel() { }
-       
+
+        public ContatoModel(string tipo, string texto)
+        {
+            Tipo = tipo;
+            Texto = texto;
+        }
+
     }
 }

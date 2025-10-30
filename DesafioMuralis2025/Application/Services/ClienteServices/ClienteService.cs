@@ -1,4 +1,5 @@
-﻿using DesafioMuralis2025.Application.Providers.CepProvider;
+﻿using DesafioMuralis2025.Application.Mappers;
+using DesafioMuralis2025.Application.Providers.CepProvider;
 using DesafioMuralis2025.Application.Request;
 using DesafioMuralis2025.Domain.DTOs;
 using DesafioMuralis2025.Domain.Models;
@@ -16,51 +17,87 @@ namespace DesafioMuralis2025.Application.Services.ClienteServices
             _cepProvider = cepProvider;
         }
 
-        public Task<ResponseModel<ClienteDTO>> AddAsync(ClienteRequest request)
+        public async Task<ResponseModel<ClienteDTO>> AddAsync(CreateClienteRequest request)
         {
 
-            using (var transaction = _clienteRepository.BeginTransactionAsync())
+            var enderecoResponse = await _cepProvider.GetAddressByCepAsync(request.Endereco.Cep);
+            if (enderecoResponse == null)
+                return ResponseModel<ClienteDTO>.Failure("Endereço não encontrado para o CEP informado.");
+
+            var endereco = new EnderecoModel
+            (
+                enderecoResponse.Cep,
+                enderecoResponse.Logradouro,
+                enderecoResponse.Cidade,
+                request.Endereco.Numero,
+                request.Endereco.Complemento
+            );
+
+            var novoCliente = new ClienteModel
+            (
+                request.Nome,
+                endereco,
+                request.Contatos.Select(c => new ContatoModel(c.Tipo, c.Texto)).ToList()
+            );
+
+            await using (var transaction = await _clienteRepository.BeginTransactionAsync())
             {
                 try
                 {
-                    // Lógica para adicionar o cliente
-                    // 1. Validar o request
-                    // 2. Obter o endereço pelo CEP usando _cepProvider
-                    // 3. Mapear o request para a entidade Cliente
-                    // 4. Salvar o cliente no repositório
+                    await _clienteRepository.AddAsync(novoCliente);
 
-                    var enderecoResponse = _cepProvider.GetAddressByCepAsync(request.Cep);
+                    await _clienteRepository.CommitAsync();
 
-                    if (enderecoResponse == null)
-                    {
-                        transaction.Rollback();
-                        return Task.FromResult(ResponseModel<ClienteDTO>.Failure("Erro ao obter o endereço pelo CEP: " + enderecoResponse.Result.ErrorMessage));
-                    }
+                    await transaction.CommitAsync();
 
-                } catch (Exception ex)
+                    var clienteDto = new ClienteDTO
+                    (
+                        novoCliente.Id,
+                        novoCliente.Nome,
+                        novoCliente.DataCadastro,
+                        novoCliente.Endereco.ToMapEndereco(), 
+                        novoCliente.Contatos.Select(c => new ContatoDTO(c.Tipo, c.Texto)).ToList()
+                    );
+
+                    return ResponseModel<ClienteDTO>.Success(clienteDto);
+
+                }
+                catch (Exception ex)
                 {
-                    transaction.Rollback();
-                    return Task.FromResult(ResponseModel<ClienteDTO>.Failure("Erro ao adicionar o cliente: " + ex.Message));
+                    await transaction.RollbackAsync();
+                    return await Task.FromResult(ResponseModel<ClienteDTO>.Failure("Erro ao adicionar o cliente: " + ex.Message));
 
                 }
             }
 
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
+
         }
 
-        public Task GetAll()
+
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            await _clienteRepository.DeleteAsync(id);
         }
 
-        public Task GetById(int id)
+        public async Task<ResponseModel<List<ClienteDTO>>> GetAll()
         {
-            throw new NotImplementedException();
+            var lista = await _clienteRepository.GetAll();
+            if(lista == null || !lista.Any())
+                return ResponseModel<List<ClienteDTO>>.Failure("Nenhum cliente encontrado.");
+
+            return ResponseModel<List<ClienteDTO>>.Success(lista.Select(c => c.ToMapClienteDTO()).ToList());
         }
 
-        public Task UpdateAsync(ClienteRequest request)
+        public async Task<ResponseModel<ClienteDTO>> GetById(int id)
+        {
+            var cliente = await _clienteRepository.GetById(id);
+            if(cliente == null)
+                return ResponseModel<ClienteDTO>.Failure("Cliente não encontrado.");
+
+            return ResponseModel<ClienteDTO>.Success(cliente.ToMapClienteDTO());
+        }
+
+        public async Task<ResponseModel<ClienteDTO>> UpdateAsync(CreateClienteRequest request)
         {
             throw new NotImplementedException();
         }

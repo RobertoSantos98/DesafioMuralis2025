@@ -6,11 +6,11 @@ namespace DesafioMuralis2025.Application.Services.ClienteServices
 {
     public interface IClienteService
     {
-        Task<ResponseModel<ClienteDTO>> AddAsync(ClienteRequest request);
-        Task UpdateAsync(ClienteRequest request);
+        Task<ResponseModel<ClienteDTO>> AddAsync(CreateClienteRequest request);
+        Task<ResponseModel<ClienteDTO>> UpdateAsync(CreateClienteRequest request);
         Task DeleteAsync(int id);
-        Task GetAll();
-        Task GetById(int id);
+        Task<ResponseModel<List<ClienteDTO>>> GetAll();
+        Task<ResponseModel<ClienteDTO>> GetById(int id);
 
     }
 }

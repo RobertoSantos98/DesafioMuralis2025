@@ -1,4 +1,6 @@
 ﻿using DesafioMuralis2025.Domain.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DesafioMuralis2025.Infrastructure.Repositories.Clientes
 {
@@ -26,13 +28,27 @@ namespace DesafioMuralis2025.Infrastructure.Repositories.Clientes
             return await _context.Clientes.FindAsync(id);
         }
 
+        public async Task<List<ClienteModel>> GetAll()
+        {
+            return await _context.Clientes
+                .Include(c => c.Endereco)
+                .Include(c => c.Contatos)
+                .ToListAsync();
+        }
+
         public async Task UpdateAsync(ClienteModel cliente)
         {
             _context.Update(cliente);
         }
-        public async Task DeleteAsync(ClienteModel cliente)
+        public async Task DeleteAsync(int id)
         {
-            _context.Clientes.Remove(cliente);
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente != null)
+                _context.Clientes.Remove(cliente);
+        }
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
         }
     }
 }

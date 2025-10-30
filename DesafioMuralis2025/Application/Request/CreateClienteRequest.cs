@@ -4,24 +4,29 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DesafioMuralis2025.Application.Request
 {
-    public class ClienteRequest
+    public class CreateClienteRequest
     {
         [Required(ErrorMessage = "O nome é obrigatório.")]
         public string Nome { get; set; }
+        public List<CreateContatoRequest> Contatos { get; set; }
+        public CreateEnderecoRequest Endereco { get; set; }
+    }
 
-        public string? DataCadastro { get; set; } = DateTime.Now.ToString("yyyy-MM-dd");
-
-        [Required(ErrorMessage = "A data de nascimento é obrigatória.")]
-        public List<ContatoModel> Contatos { get; set; } = new List<ContatoModel>();
-
+    public class CreateEnderecoRequest
+    {
         [Required(ErrorMessage = "O CEP é obrigatório.")]
         [CepValidation(ErrorMessage = "O CEP informado é inválido.")]
         public string Cep { get; set; }
-
-        public string Logradouro { get; set; }
-
         public string Numero { get; set; }
-
         public string? Complemento { get; set; }
+    }
+
+    public class CreateContatoRequest
+    {
+        [Required(ErrorMessage = "O tipo de contato é obrigatório.")]
+        public string Tipo { get; set; }
+
+        [Required(ErrorMessage = "O valor do contato é obrigatório.")]
+        public string Texto { get; set; }
     }
 }

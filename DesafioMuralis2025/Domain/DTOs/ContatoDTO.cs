@@ -2,7 +2,6 @@
 {
     public record ContatoDTO
     (
-        int Id ,
         string Tipo,
         string Texto
     );

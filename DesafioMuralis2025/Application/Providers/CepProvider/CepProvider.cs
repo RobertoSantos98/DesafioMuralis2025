@@ -22,7 +22,7 @@ namespace DesafioMuralis2025.Application.Providers.CepProvider
 
                 var response = await _httpClient.GetAsync(URL);
 
-                if (response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
                     throw new Exception("Endereço não encontrado para o CEP informado.");
                 }

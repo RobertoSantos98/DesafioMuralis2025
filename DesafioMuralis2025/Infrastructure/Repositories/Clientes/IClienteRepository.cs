@@ -1,4 +1,5 @@
 ﻿using DesafioMuralis2025.Domain.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DesafioMuralis2025.Infrastructure.Repositories.Clientes
 {
@@ -7,7 +8,9 @@ namespace DesafioMuralis2025.Infrastructure.Repositories.Clientes
         Task AddAsync(ClienteModel cliente);
         Task UpdateAsync(ClienteModel cliente);
         Task<ClienteModel?> GetById(int id);
-        Task DeleteAsync (ClienteModel cliente);
+        Task<List<ClienteModel>> GetAll();
+        Task DeleteAsync (int id);
         Task CommitAsync();
+        Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }
