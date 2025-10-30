@@ -36,10 +36,11 @@ Um editor de código, como Visual Studio Code ou Visual Studio 2022.
 2. Clonando o Repositório (Git)
 Use o Git para clonar este repositório para sua máquina local.
 
-Bash
 
 # Clone o repositório
+```Bash
 git clone https://github.com/RobertoSantos98/DesafioMuralis2025.git
+```
 
 # Navegue para a pasta do projeto
 cd DesafioMuralis2025
@@ -52,11 +53,13 @@ Edite o appsettings.json: Abra o arquivo appsettings.json (ou appsettings.Develo
 
 Ajuste a ConnectionStrings: Localize a seção ConnectionStrings e edite a DefaultConnection com suas credenciais locais do PostgreSQL.
 
-JSON
+```json
 
 "ConnectionStrings": {
   "DefaultConnection": "Host=localhost;Port=5432;Database=DesafioMuralis;Username=postgres;Password=admin"
 }
+```
+
 Host: O endereço do seu servidor (normalmente localhost).
 
 Database: O nome do banco que você criou no passo 1.
@@ -74,16 +77,21 @@ Abra um terminal na pasta raiz do projeto da API (o projeto que contém o arquiv
 
 Execute o comando database update: Este comando irá ler os arquivos de migração existentes no projeto e aplicá-los ao seu banco de dados, criando todas as tabelas e relacionamentos.
 
-Bash
 
 # Se o seu DbContext (ex: AppDbContext) está no mesmo projeto da API
+```Bash
 dotnet ef database update
+```
+
 Nota: Se o seu DbContext estiver em um projeto de biblioteca de classes separado (ex: DesafioMuralis2025.Infrastructure), você deve executar o comando a partir da pasta da API, mas apontando para o projeto de infra:
 
-Bash
 
 # Exemplo se o DbContext estiver em um projeto .Infrastructure
+
+```Bash
 dotnet ef database update --project ../DesafioMuralis2025.Infrastructure
+```
+
 Após o comando ser executado com sucesso, seu banco de dados estará populado com as tabelas necessárias.
 
 🏃‍♀️ Rodando a API
@@ -91,9 +99,11 @@ Com o banco de dados pronto, você pode iniciar a aplicação.
 
 Execute o projeto: Ainda no terminal, na pasta do projeto da API, execute:
 
-Bash
+```Bash
 
 dotnet run
+```
+
 Acesse a API: A API estará rodando. O terminal mostrará as URLs (ex: http://localhost:5123 e https://localhost:7123).
 
 📖 Acessando o Swagger (Documentação Interativa)
