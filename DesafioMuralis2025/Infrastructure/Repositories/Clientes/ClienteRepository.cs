@@ -25,7 +25,7 @@ namespace DesafioMuralis2025.Infrastructure.Repositories.Clientes
 
         public async Task<ClienteModel?> GetById(int id)
         {
-            return await _context.Clientes.FindAsync(id);
+            return await _context.Clientes.Include(c => c.Endereco).Include(c=> c.Contatos).FirstOrDefaultAsync(c=> c.Id == id);
         }
 
         public async Task<List<ClienteModel>> GetAll()
@@ -40,6 +40,7 @@ namespace DesafioMuralis2025.Infrastructure.Repositories.Clientes
         {
             _context.Update(cliente);
         }
+
         public async Task DeleteAsync(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);

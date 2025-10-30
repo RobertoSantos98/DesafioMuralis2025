@@ -55,6 +55,14 @@ namespace DesafioMuralis2025.Controllers
             return NoContent();
         }
 
+        [HttpPut]
+        public async Task<IActionResult> UpdateClient([FromBody] UpdateClienteRequest request)
+        {
+            var result = await _clienteService.UpdateAsync(request);
+            if (!result.IsSuccess)
+                return BadRequest(result.ErrorMessage);
+            return Ok(result);
+        }
 
     }
 }

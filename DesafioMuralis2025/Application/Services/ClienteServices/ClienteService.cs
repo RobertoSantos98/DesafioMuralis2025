@@ -77,6 +77,7 @@ namespace DesafioMuralis2025.Application.Services.ClienteServices
         public async Task DeleteAsync(int id)
         {
             await _clienteRepository.DeleteAsync(id);
+            await _clienteRepository.CommitAsync();
         }
 
         public async Task<ResponseModel<List<ClienteDTO>>> GetAll()
@@ -97,9 +98,48 @@ namespace DesafioMuralis2025.Application.Services.ClienteServices
             return ResponseModel<ClienteDTO>.Success(cliente.ToMapClienteDTO());
         }
 
-        public async Task<ResponseModel<ClienteDTO>> UpdateAsync(CreateClienteRequest request)
+        public async Task<ResponseModel<ClienteDTO>> UpdateAsync(UpdateClienteRequest request)
         {
-            throw new NotImplementedException();
+            await using(var transaction = await _clienteRepository.BeginTransactionAsync())
+            {
+                try
+                {
+                    var clienteExistente = await _clienteRepository.GetById(request.Id);
+                    if (clienteExistente == null)
+                        return ResponseModel<ClienteDTO>.Failure("Cliente não encontrado.");
+
+                    clienteExistente.UpdateNome(request.Nome);
+
+                    var enderecoResponse = await _cepProvider.GetAddressByCepAsync(request.Endereco.Cep);
+                    if (enderecoResponse == null)
+                        return ResponseModel<ClienteDTO>.Failure("Endereço não encontrado para o CEP informado.");
+
+                    var enderecoAtualizado = new EnderecoModel(
+                        enderecoResponse.Cep,
+                        enderecoResponse.Logradouro,
+                        enderecoResponse.Cidade,
+                        request.Endereco.Numero,
+                        request.Endereco.Complemento ?? string.Empty
+                        );
+
+                    clienteExistente.UpdateEndereco(enderecoAtualizado);
+
+                    clienteExistente.UpdateContatos(
+                            request.Contatos.Select(c => new ContatoModel(c.Tipo, c.Texto)).ToList()
+                    );
+
+                    await _clienteRepository.UpdateAsync(clienteExistente);
+                    await _clienteRepository.CommitAsync();
+                    await transaction.CommitAsync();
+
+                    return ResponseModel<ClienteDTO>.Success(clienteExistente.ToMapClienteDTO());
+
+                }catch(Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    return ResponseModel<ClienteDTO>.Failure("Erro ao atualizar o cliente: " + ex.Message);
+                }
+            }
         }
     }
 }

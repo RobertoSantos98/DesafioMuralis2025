@@ -2,8 +2,7 @@ using DesafioMuralis2025.Application.Providers.CepProvider;
 using DesafioMuralis2025.Application.Services.ClienteServices;
 using DesafioMuralis2025.Infrastructure;
 using DesafioMuralis2025.Infrastructure.Repositories.Clientes;
-using DesafioMuralis2025.Infrastructure.Repositories.Contato;
-using DesafioMuralis2025.Infrastructure.Repositories.Endereco;
+
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<IEnderecoRepository, EnderecoRepository>();
-builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
+
 
 
 builder.Services.AddHttpClient<ICepProvider, CepProvider>();

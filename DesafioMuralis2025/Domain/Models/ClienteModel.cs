@@ -22,6 +22,20 @@
             Contatos = contatos;
         }
 
+        public void UpdateNome(string nome)
+        {
+            Nome = nome;
+        }
+
+        public void UpdateEndereco(EnderecoModel endereco)
+        {
+            Endereco = endereco;
+        }
+
+        public void UpdateContatos(ICollection<ContatoModel> contatos)
+        {
+            Contatos = contatos;
+        }
 
     }
 }
